@@ -1,6 +1,7 @@
-# In your models.py file
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -32,10 +33,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+
+
 class Expense(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     expense_name = models.CharField(max_length=255, help_text="Expense name/description")
     amount_spent = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount spent")
-    date_of_transaction = models.DateField(help_text="Date of transaction")
+    date_of_transaction = models.DateTimeField(auto_now_add=True,help_text="Date of transaction")
     # Create a choices tuple for the expense categories
     EXPENSE_CATEGORIES = [
         ('Food', 'Food'),
